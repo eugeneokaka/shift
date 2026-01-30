@@ -11,6 +11,7 @@ type ApiResponse = {
 
 export default function Home() {
   const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,12 @@ export default function Home() {
     setLoading(true);
     setResult(null);
 
-    const res = await fetch(`/api/shift?date=${date}`);
+    const query = new URLSearchParams({ date });
+    if (startDate) {
+      query.append("startDate", startDate);
+    }
+
+    const res = await fetch(`/api/shift?${query.toString()}`);
     const data: ApiResponse = await res.json();
 
     setResult(data);
@@ -46,7 +52,18 @@ export default function Home() {
           </p>
 
           <div className="w-full space-y-4">
-            <div className="relative">
+             <div className="text-left w-full space-y-1">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Start Date (Optional)</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-center placeholder-slate-400"
+              />
+            </div>
+            
+            <div className="text-left w-full space-y-1">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Check Date</label>
               <input
                 type="date"
                 value={date}
